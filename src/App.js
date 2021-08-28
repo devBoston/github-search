@@ -8,6 +8,7 @@ import { Card, Icon, Image } from "semantic-ui-react";
 import MenuItem from "@material-ui/core/MenuItem";
 
 import Select from "@material-ui/core/Select";
+import FormHelperText from "@material-ui/core/FormHelperText";
 
 function App() {
   const [name, setName] = useState("");
@@ -19,9 +20,7 @@ function App() {
   const [userInput, setUserInput] = useState("");
   const [error, setError] = useState("");
   const [repoData, setRepoData] = useState([]);
-  const [filteredLang, setFilteredLang] = useState([]);
-  const [state, setState] = React.useState("");
-  const [repoName, setRepoName] = React.useState("");
+  const [state, setState] = useState("");
 
   const handleSearch = (e) => {
     setUserInput(e.target.value);
@@ -29,9 +28,7 @@ function App() {
   };
 
   const handleChange = (event) => {
-    console.log("what has been seelcted:", event.currentTarget);
     setState(event.target.value);
-    console.log("state selection is:", state);
   };
 
   const handleSubmit = () => {
@@ -53,10 +50,7 @@ function App() {
       .then((res) => res.json())
       .then((data) => setRepoData(data))
       .then((data) => console.log("repo data:", repoData));
-    mapRepoData();
   };
-
-  const mapRepoData = () => {};
 
   const setData = ({
     name,
@@ -72,14 +66,16 @@ function App() {
     setFollowing(following);
     setRepos(public_repos);
     setAvatar(avatar_url);
-    setFilteredLang(uniqueNames);
   };
 
   const languageOptions = repoData.map((item) => item.language);
-  console.log("languageOptions", languageOptions);
 
-  const findNameByLang = repoData.map((item) => {
-    item.language == state ? console.log(item.name) : console.log("not found");
+  let repoArray = [];
+
+  let findNameByLang = repoData.map((item) => {
+    item.language == state
+      ? repoArray.push(item.name)
+      : console.log("not found");
   });
 
   const filteredLanguageOptions = languageOptions.filter(function (
@@ -132,24 +128,18 @@ function App() {
               {following} following
             </Card.Content>
 
-            <Card.Content extra>
+            <Card.Content>
+              <FormHelperText>Filter repos by language:</FormHelperText>
               <Select onChange={handleChange} fluid>
                 {uniqueNames.map((item) => (
                   <MenuItem value={item}>{item}</MenuItem>
                 ))}
               </Select>
-            </Card.Content>
-          </Card>
-          <Card style={{ margin: "35px" }}>
-            <Card.Header>
-              {repoData.map((item) => {
-                item.language == state ? (
-                  <div>{item.name}</div>
-                ) : (
-                  console.log("null")
-                );
+
+              {repoArray.map(function (item, i) {
+                return <h2 key={i}>{item}</h2>;
               })}
-            </Card.Header>
+            </Card.Content>
           </Card>
         </div>
       )}
